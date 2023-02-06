@@ -4,7 +4,6 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 require("dotenv").config();
 const mongoose = require("mongoose");
-const jwt = require("jsonwebtoken");
 
 // Connect to MongoDB
 mongoose.set("strictQuery", true); // suppress warning
