@@ -1,9 +1,10 @@
-var express = require("express");
-var path = require("path");
-var cookieParser = require("cookie-parser");
-var logger = require("morgan");
+const express = require("express");
+const path = require("path");
+const cookieParser = require("cookie-parser");
+const logger = require("morgan");
 require("dotenv").config();
-let mongoose = require("mongoose");
+const mongoose = require("mongoose");
+const jwt = require("jsonwebtoken");
 
 // Connect to MongoDB
 mongoose.set("strictQuery", true); // suppress warning
@@ -19,16 +20,16 @@ mongoose
     console.log("Failed to connect MongoDB: " + err);
   });
 
-let app = express();
+const app = express();
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-let indexRouter = require("./routes/index");
+const indexRouter = require("./routes/index");
 app.use("/", indexRouter);
 
-let usersRouter = require("./routes/users");
+const usersRouter = require("./routes/users");
 app.use("/users", usersRouter);
 
 module.exports = app;
