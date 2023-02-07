@@ -28,4 +28,6 @@ router.post("/signup", (req, res) => {
   return res.json({ test: "ok" });
 });
 
+router.post("login", (req, res) => {});
+
 module.exports = router;
