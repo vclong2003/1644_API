@@ -28,7 +28,9 @@ app.use(cookieParser());
 const authRouter = require("./routes/auth");
 app.use("/api/auth", authRouter);
 
-const usersRouter = require("./routes/users");
-app.use("/users", usersRouter);
+const jwtVerifyRouter = require("./routes/jwtVerify");
+
+const productRouter = require("./routes/product");
+app.use("/product", jwtVerifyRouter, productRouter);
 
 module.exports = app;
