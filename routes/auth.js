@@ -21,10 +21,14 @@ router.post("/signup", async (req, res) => {
   }
 
   password = bcrypt.hashSync(password, 10);
-  const newUser = await user.create({ email: email, password: password });
+  const newUser = await user.create({
+    email: email,
+    password: password,
+    role: ["customer"],
+  });
 
   const token = jwt.sign(
-    { userId: newUser._id, email: newUser.email },
+    { userId: newUser._id, email: newUser.email, role: newUser.role },
     process.env.JWT_SECRET,
     { expiresIn: process.env.JWT_EXPIRE }
   );
@@ -32,6 +36,7 @@ router.post("/signup", async (req, res) => {
   return res.status(200).json({
     email: newUser.email,
     userId: newUser._id,
+    role: newUser.role,
     token: token,
   });
 });
@@ -58,7 +63,11 @@ router.post("/login", async (req, res) => {
   }
 
   const token = jwt.sign(
-    { userId: currentUser._id, email: currentUser.email },
+    {
+      userId: currentUser._id,
+      email: currentUser.email,
+      role: currentUser.role,
+    },
     process.env.JWT_SECRET,
     { expiresIn: process.env.JWT_EXPIRE }
   );
@@ -66,6 +75,7 @@ router.post("/login", async (req, res) => {
   return res.status(200).json({
     email: currentUser.email,
     userId: currentUser._id,
+    role: currentUser.role,
     token: token,
   });
 });
