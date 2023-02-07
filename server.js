@@ -4,6 +4,12 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 require("dotenv").config();
 const mongoose = require("mongoose");
+const app = express();
+
+app.use(logger("dev"));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
 
 // Connect to MongoDB
 mongoose.set("strictQuery", true); // suppress warning
@@ -18,12 +24,6 @@ mongoose
   .catch((err) => {
     console.log("Failed to connect MongoDB: " + err);
   });
-
-const app = express();
-app.use(logger("dev"));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
 
 const authRouter = require("./routes/auth");
 app.use("/api/auth", authRouter);

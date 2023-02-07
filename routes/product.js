@@ -6,7 +6,7 @@ router.get("/", function (req, res) {
 });
 
 router.get("/test", (req, res) => {
-  return res.send("ok");
+  return res.json({ id: req.userId, email: req.email });
 });
 
 module.exports = router;
