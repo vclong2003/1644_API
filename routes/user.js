@@ -5,8 +5,8 @@ const { user } = require("../models");
 
 router.get("/", async (req, res) => {
   const _id = req.userId;
-  let currentUser;
 
+  let currentUser;
   try {
     currentUser = await user.findOne({ _id: _id });
   } catch (error) {
