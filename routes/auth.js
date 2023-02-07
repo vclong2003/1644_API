@@ -5,8 +5,25 @@ const jwt = require("jsonwebtoken");
 
 const user = require("../models/userModel");
 
+// Verify token
 router.get("/", (req, res) => {
-  return res.send("test ok");
+  const token = req.headers.authorization
+    ? req.headers.authorization.split(" ")[1]
+    : null;
+
+  if (!token) {
+    return res.status(400).send("token not provided");
+  }
+
+  let decodedToken;
+  try {
+    decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+    console.log(decodedToken);
+    return res.status(200).send("test ok");
+  } catch (error) {
+    console.log(error);
+    return res.status(400).send("token expired");
+  }
 });
 
 //Register
@@ -16,22 +33,19 @@ router.post("/signup", async (req, res) => {
 
   const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
   if (!emailRegex.test(email) || !password) {
-    res.status(400);
-    return res.send("invalid request");
+    return res.status(400).send("invalid request");
   }
 
   let existedUser = await user.findOne({ email: email });
   if (existedUser) {
-    res.status(400);
-    return res.send("user exsited");
+    return res.status(400).send("user exsited");
   }
 
   password = bcrypt.hashSync(password, 10);
   const newUser = await user.create({ email: email, password: password });
   console.log(newUser);
 
-  res.status(200);
-  return res.json({ test: "ok" });
+  return res.status(200).json({ test: "ok" });
 });
 
 // Login
@@ -41,25 +55,31 @@ router.post("/login", async (req, res) => {
 
   const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
   if (!emailRegex.test(email) || !password) {
-    res.status(400);
-    return res.send("invalid request");
+    return res.status(400).send("invalid request");
   }
 
   let currentUser = await user.findOne({ email: email });
 
   if (!currentUser) {
-    res.status(400);
-    return res.send("user not found");
+    return res.status(400).send("user not found");
   }
 
   const passwordMatch = bcrypt.compareSync(password, currentUser.password);
-  if (passwordMatch) {
-    res.status(200);
-    return res.json(currentUser);
+  if (!passwordMatch) {
+    return res.status(400).send("authentication error");
   }
 
-  res.status(400);
-  return res.send("authentication error");
+  const token = jwt.sign(
+    { userId: currentUser._id, email: currentUser.email },
+    process.env.JWT_SECRET,
+    { expiresIn: process.env.JWT_EXPIRE }
+  );
+
+  return res.status(200).json({
+    email: currentUser.email,
+    userId: currentUser._id,
+    token: token,
+  });
 });
 
 module.exports = router;
