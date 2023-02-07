@@ -31,6 +31,9 @@ app.use("/api/auth", authRouter);
 const jwtVerifyRouter = require("./routes/jwtVerify");
 
 const productRouter = require("./routes/product");
-app.use("/product", jwtVerifyRouter, productRouter);
+app.use("/api/product", jwtVerifyRouter, productRouter);
+
+const userRouter = require("./routes/user");
+app.use("/api/user", jwtVerifyRouter, userRouter);
 
 module.exports = app;
