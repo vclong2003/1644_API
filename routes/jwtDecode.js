@@ -10,7 +10,7 @@ router.use("/*", (req, res, next) => {
     : null;
 
   if (!token) {
-    return res.status(400).send("token not provided");
+    return res.status(401).send("token not provided");
   }
 
   let decodedToken;
@@ -25,7 +25,7 @@ router.use("/*", (req, res, next) => {
     next();
   } catch (error) {
     console.log(error);
-    return res.status(400).send("token expired");
+    return res.status(401).send("token expired");
   }
 });
 

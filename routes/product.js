@@ -3,8 +3,9 @@ var router = express.Router();
 
 const { product } = require("../models");
 
-// Add products (allowed: 'staff', 'admin')
 /*
+Add products (allowed: 'staff', 'admin')
+
 name: String,
 thumbnailUrl: String,
 description: String,
@@ -37,6 +38,7 @@ router.post("/", async (req, res) => {
       description: description,
       price: price,
       stock: stock,
+      dateAdded: new Date().toJSON(),
     });
   } catch (error) {
     console.log(error);
@@ -46,8 +48,33 @@ router.post("/", async (req, res) => {
   return res.status(200).json(newProduct);
 });
 
-router.get("/test", (req, res) => {
-  return res.json({ id: req.userId, email: req.email });
+/*
+Get all products
+
+query value: searchVal, skip, limit, sort
+supported sort type: 'dateAdded_asc', 'dateAdded_desc' , 'name_asc', 'name_desc'
+*/
+router.get("/", async (req, res) => {
+  const searchVal = req.query.searchVal ? req.query.searchVal : "";
+  const skip = req.query.skip ? req.query.skip : null;
+  const limit = req.query.limit ? req.query.limit : null;
+  const sort = req.query.sort
+    ? { [req.query.sort.split("_")[0]]: req.query.sort.split("_")[1] }
+    : { dateAdded: "desc" };
+
+  let products;
+  try {
+    products = await product
+      .find({ name: new RegExp(`${searchVal}`, "i") })
+      .sort(sort)
+      .skip(skip)
+      .limit(limit);
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+
+  return res.status(200).json(products);
 });
 
 module.exports = router;
