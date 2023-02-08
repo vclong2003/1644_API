@@ -4,12 +4,14 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 require("dotenv").config();
 const mongoose = require("mongoose");
-const app = express();
+const server = express();
+const cors = require("cors");
 
-app.use(logger("dev"));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
+server.use(logger("dev"));
+server.use(express.json());
+server.use(express.urlencoded({ extended: false }));
+server.use(cookieParser());
+server.use(cors());
 
 // Connect to MongoDB
 mongoose.set("strictQuery", true); // suppress warning
@@ -26,14 +28,16 @@ mongoose
   });
 
 const authRouter = require("./routes/auth");
-app.use("/api/auth", authRouter);
+server.use("/api/auth", authRouter);
 
 const jwtDecode = require("./routes/jwtDecode");
 
 const productRouter = require("./routes/product");
-app.use("/api/product", jwtDecode, productRouter);
+server.use("/api/product", jwtDecode, productRouter);
 
 const userRouter = require("./routes/user");
-app.use("/api/user", jwtDecode, userRouter);
+server.use("/api/user", jwtDecode, userRouter);
 
-module.exports = app;
+server.listen(process.env.SERVER_PORT, () => {
+  console.log(`Server running (Port: ${process.env.SERVER_PORT})`);
+});
