@@ -21,6 +21,7 @@ router.get("/*", (req, res, next) => {
     // For using in next middleware
     req.userId = decodedToken.userId;
     req.email = decodedToken.email;
+    req.role = decodedToken.role;
 
     next();
   } catch (error) {
