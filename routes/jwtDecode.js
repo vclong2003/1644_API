@@ -4,10 +4,8 @@ const jwt = require("jsonwebtoken");
 
 // Verify token
 router.use("/*", (req, res, next) => {
-  // Get token from header (Bearer token)
-  const token = req.headers.authorization
-    ? req.headers.authorization.split(" ")[1]
-    : null;
+  // Get token from cookies
+  const token = req.cookies.token ? req.cookies.token : null;
 
   if (!token) {
     return res.status(401).send("token not provided");
@@ -25,7 +23,7 @@ router.use("/*", (req, res, next) => {
     next();
   } catch (error) {
     console.log(error);
-    return res.status(401).send("token expired");
+    return res.status(401).clearCookie("token").send("token expired");
   }
 });
 

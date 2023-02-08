@@ -34,12 +34,7 @@ router.post("/signup", async (req, res) => {
     { expiresIn: process.env.JWT_EXPIRE }
   );
 
-  return res.status(200).json({
-    email: newUser.email,
-    userId: newUser._id,
-    role: newUser.role,
-    token: token,
-  });
+  return res.cookie("token", token).sendStatus(200);
 });
 
 // Login
@@ -59,7 +54,7 @@ router.post("/login", async (req, res) => {
   if (!passwordMatch) {
     return res.status(400).send("authentication error");
   }
-  
+
   const token = jwt.sign(
     {
       userId: currentUser._id,
@@ -70,12 +65,7 @@ router.post("/login", async (req, res) => {
     { expiresIn: process.env.JWT_EXPIRE }
   );
 
-  return res.status(200).json({
-    email: currentUser.email,
-    userId: currentUser._id,
-    role: currentUser.role,
-    token: token,
-  });
+  return res.cookie("token", token).sendStatus(200);
 });
 
 module.exports = router;
