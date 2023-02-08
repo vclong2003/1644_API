@@ -3,7 +3,7 @@ const router = express.Router();
 const jwt = require("jsonwebtoken");
 
 // Verify token
-router.get("/*", (req, res, next) => {
+router.use("/*", (req, res, next) => {
   // Get token from header (Bearer token)
   const token = req.headers.authorization
     ? req.headers.authorization.split(" ")[1]
@@ -16,12 +16,11 @@ router.get("/*", (req, res, next) => {
   let decodedToken;
   try {
     decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-    console.log(decodedToken);
 
     // For using in next middleware
     req.userId = decodedToken.userId;
-    req.email = decodedToken.email;
-    req.role = decodedToken.role;
+    req.userEmail = decodedToken.email;
+    req.userRole = decodedToken.role;
 
     next();
   } catch (error) {

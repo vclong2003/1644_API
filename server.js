@@ -28,12 +28,12 @@ mongoose
 const authRouter = require("./routes/auth");
 app.use("/api/auth", authRouter);
 
-const jwtVerifyRouter = require("./routes/jwtVerify");
+const jwtDecode = require("./routes/jwtDecode");
 
 const productRouter = require("./routes/product");
-app.use("/api/product", jwtVerifyRouter, productRouter);
+app.use("/api/product", jwtDecode, productRouter);
 
 const userRouter = require("./routes/user");
-app.use("/api/user", jwtVerifyRouter, userRouter);
+app.use("/api/user", jwtDecode, userRouter);
 
 module.exports = app;
