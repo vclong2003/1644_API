@@ -38,6 +38,4 @@ server.use("/api/product", jwtDecode, productRouter);
 const userRouter = require("./routes/user");
 server.use("/api/user", jwtDecode, userRouter);
 
-server.listen(process.env.SERVER_PORT, () => {
-  console.log(`Server running (Port: ${process.env.SERVER_PORT})`);
-});
+server.listen(process.env.SERVER_PORT);

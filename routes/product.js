@@ -20,7 +20,10 @@ router.get("/", async (req, res) => {
   let products;
   try {
     products = await product
-      .find({ name: new RegExp(`${searchVal}`, "i") })
+      .find(
+        { name: new RegExp(`${searchVal}`, "i") },
+        "-description -dateAdded"
+      )
       .sort(sort)
       .skip(skip)
       .limit(limit);
@@ -30,6 +33,22 @@ router.get("/", async (req, res) => {
   }
 
   return res.status(200).json(products);
+});
+
+/*
+Get single product
+*/
+router.get("/:productId", async (req, res) => {
+  const productId = req.params.productId;
+  let selectedProduct;
+  try {
+    selectedProduct = await product.find({ _id: productId });
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(400);
+  }
+
+  return res.status(200).json(selectedProduct);
 });
 
 /*
@@ -105,7 +124,7 @@ router.put("/:productId", async (req, res) => {
     selectedProduct = await product.find({ _id: productId });
   } catch (error) {
     console.log(error);
-    return res.sendStatus(500);
+    return res.sendStatus(400);
   }
 
   console.log(req.params);

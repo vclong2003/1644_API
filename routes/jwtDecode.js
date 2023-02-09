@@ -2,8 +2,8 @@ const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
 
-// Verify token
-router.use("/*", (req, res, next) => {
+// Decode JWT token
+router.use((req, res, next) => {
   // Get token from cookies
   const token = req.cookies.token ? req.cookies.token : null;
 
