@@ -17,13 +17,14 @@ router.get("/", async (req, res) => {
     ? { [req.query.sort.split("_")[0]]: req.query.sort.split("_")[1] }
     : { dateAdded: "desc" };
 
+  let count;
   let products;
   try {
+    const searchRegExp = new RegExp(`${searchVal}`, "i");
+
+    count = await product.find({ name: searchRegExp }).count();
     products = await product
-      .find(
-        { name: new RegExp(`${searchVal}`, "i") },
-        "-description -dateAdded"
-      )
+      .find({ name: searchRegExp }, "-description -dateAdded")
       .sort(sort)
       .skip(skip)
       .limit(limit);
@@ -32,7 +33,7 @@ router.get("/", async (req, res) => {
     return res.sendStatus(500);
   }
 
-  return res.status(200).json(products);
+  return res.status(200).json({ count: count, data: products });
 });
 
 /*
@@ -69,11 +70,9 @@ router.post("/", async (req, res) => {
     return res.sendStatus(403);
   }
 
-  const name = req.body.name;
-  const thumbnailUrl = req.body.thumbnailUrl;
-  const description = req.body.description;
-  const price = req.body.price;
-  const stock = req.body.stock;
+  // JS destructuring
+  const { name, thumbnailUrl, description, price, stock } = req.body;
+
   if (!name || !thumbnailUrl || !description || !price || !stock) {
     return res.sendStatus(400);
   }
@@ -118,18 +117,28 @@ router.put("/:productId", async (req, res) => {
     return res.sendStatus(403);
   }
 
+  const { name, thumbnailUrl, description, price, stock } = req.body;
+
   const productId = req.params.productId;
   let selectedProduct;
   try {
-    selectedProduct = await product.find({ _id: productId });
+    selectedProduct = await product.findOneAndUpdate(
+      { _id: productId },
+      {
+        name: name,
+        thumbnailUrl: thumbnailUrl,
+        description: description,
+        price: price,
+        stock: stock,
+      },
+      { new: true }
+    );
   } catch (error) {
     console.log(error);
     return res.sendStatus(400);
   }
 
-  console.log(req.params);
-
-  return res.sendStatus(200);
+  return res.status(200).json(selectedProduct);
 });
 
 module.exports = router;
