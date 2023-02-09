@@ -7,8 +7,7 @@ const { user } = require("../models");
 
 //Register
 router.post("/signup", async (req, res) => {
-  let email = req.body.email;
-  let password = req.body.password;
+  let { email, password } = req.body;
 
   //Perform validation
   const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -39,8 +38,7 @@ router.post("/signup", async (req, res) => {
 
 // Login
 router.post("/login", async (req, res) => {
-  let email = req.body.email;
-  let password = req.body.password;
+  let { email, password } = req.body;
 
   const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
   if (!emailRegex.test(email) || !password) {

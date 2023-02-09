@@ -40,7 +40,7 @@ router.get("/", async (req, res) => {
 Get single product
 */
 router.get("/:productId", async (req, res) => {
-  const productId = req.params.productId;
+  const { productId } = req.params;
   let selectedProduct;
   try {
     selectedProduct = await product.find({ _id: productId });
@@ -62,7 +62,7 @@ price: Number,
 stock: Number,
 */
 router.post("/", async (req, res) => {
-  const userRole = req.userRole;
+  const { userRole } = req;
   if (
     !userRole ||
     (!userRole.includes("staff") && !userRole.includes("admin"))
@@ -96,9 +96,7 @@ router.post("/", async (req, res) => {
 });
 
 /*
-Update product (allowed: 'staff', 'admin')
-
-Find product by id
+Update product (allowed: 'staff', 'admin'), find product by id
 
 name: String,
 thumbnailUrl: String,
@@ -107,9 +105,8 @@ price: Number,
 stock: Number,
  *not all field is required
 */
-
 router.put("/:productId", async (req, res) => {
-  const userRole = req.userRole;
+  const { userRole } = req;
   if (
     !userRole ||
     (!userRole.includes("staff") && !userRole.includes("admin"))
@@ -119,7 +116,7 @@ router.put("/:productId", async (req, res) => {
 
   const { name, thumbnailUrl, description, price, stock } = req.body;
 
-  const productId = req.params.productId;
+  const { productId } = req.params;
   let selectedProduct;
   try {
     selectedProduct = await product.findOneAndUpdate(
@@ -139,6 +136,29 @@ router.put("/:productId", async (req, res) => {
   }
 
   return res.status(200).json(selectedProduct);
+});
+
+/*
+Delete product (allowed: 'staff', 'admin'), find product by id
+*/
+router.delete("/:productId", async (req, res) => {
+  const { userRole } = req;
+  if (
+    !userRole ||
+    (!userRole.includes("staff") && !userRole.includes("admin"))
+  ) {
+    return res.sendStatus(403);
+  }
+
+  const { productId } = req.params;
+  try {
+    await product.findOneAndDelete({ _id: productId });
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(400);
+  }
+
+  return res.sendStatus(200);
 });
 
 module.exports = router;
