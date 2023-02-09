@@ -3,30 +3,42 @@ const router = express.Router();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-const { user } = require("../models");
+const { user, cart } = require("../models");
 
 //Register
 router.post("/signup", async (req, res) => {
   let { email, password } = req.body;
 
-  //Perform validation
+  //perform validation, using regular express
   const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
   if (!emailRegex.test(email) || !password) {
     return res.status(400).send("invalid request");
   }
+
+  // check if email exsisted
   let existedUser = await user.findOne({ email: email });
   if (existedUser) {
     return res.status(400).send("user exsited");
   }
 
-  password = bcrypt.hashSync(password, 10);
-  const newUser = await user.create({
-    email: email,
-    password: password,
-    role: ["customer"],
-  });
+  password = bcrypt.hashSync(password, 10); // hash password
+  let newUser;
+  try {
+    // add new user to db
+    newUser = await user.create({
+      email: email,
+      password: password,
+      role: ["customer"],
+    });
 
-  // Generate JWT
+    //create cart for new user
+    await cart.create({ user: newUser._id });
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+
+  // generate JWT
   const token = jwt.sign(
     { userId: newUser._id, email: newUser.email, role: newUser.role },
     process.env.JWT_SECRET,
@@ -40,10 +52,13 @@ router.post("/signup", async (req, res) => {
 router.post("/login", async (req, res) => {
   let { email, password } = req.body;
 
+  // validate email
   const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
   if (!emailRegex.test(email) || !password) {
     return res.status(400).send("invalid request");
   }
+
+  // find user, perform authentication
   let currentUser = await user.findOne({ email: email });
   if (!currentUser) {
     return res.status(400).send("user not found");
@@ -53,6 +68,7 @@ router.post("/login", async (req, res) => {
     return res.status(400).send("authentication error");
   }
 
+  // generate jwt
   const token = jwt.sign(
     {
       userId: currentUser._id,

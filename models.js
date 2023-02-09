@@ -5,11 +5,6 @@ const userSchema = new mongoose.Schema({
   email: String,
   password: String,
   role: [{ type: String, enum: ["customer", "staff", "admin"] }],
-  info: {
-    name: String,
-    dob: Date,
-    addresses: [{ type: Schema.Types.ObjectId, ref: "Address" }],
-  },
 });
 const user = mongoose.model("User", userSchema);
 
@@ -45,6 +40,8 @@ const orderSchema = new mongoose.Schema({
 const order = mongoose.model("Order", orderSchema);
 
 const addressSchema = new mongoose.Schema({
+  user: { type: Schema.Types.ObjectId, ref: "User" },
+  name: String,
   phoneNumber: String,
   detail: String,
   street: String,
