@@ -27,15 +27,18 @@ mongoose
     console.log("Failed to connect MongoDB: " + err);
   });
 
-const authRouter = require("./routes/auth");
-server.use("/api/auth", authRouter);
+const authRoute = require("./routes/auth");
+server.use("/api/auth", authRoute);
 
 const jwtDecode = require("./routes/jwtDecode");
 
-const productRouter = require("./routes/product");
-server.use("/api/product", jwtDecode, productRouter);
+const productRoute = require("./routes/product");
+server.use("/api/product", jwtDecode, productRoute);
 
-const userRouter = require("./routes/user");
-server.use("/api/user", jwtDecode, userRouter);
+const cartRoute = require("./routes/cart");
+server.use("/api/cart", jwtDecode, cartRoute);
+
+const userRoute = require("./routes/user");
+server.use("/api/user", jwtDecode, userRoute);
 
 server.listen(process.env.SERVER_PORT);
