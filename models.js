@@ -26,7 +26,6 @@ const cartSchema = new mongoose.Schema({
       quantity: Number,
     },
   ],
-  totalBill: Number,
 });
 const cart = mongoose.model("Cart", cartSchema);
 
