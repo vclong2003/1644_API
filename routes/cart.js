@@ -10,6 +10,8 @@ router.get("/", async (req, res) => {
   let selectedCart;
   try {
     selectedCart = await cart.findOne({ user: userId });
+    const aggregate = await cart.aggregate([{ $match: { user: userId } }, {}]);
+    console.log(aggregate);
   } catch (error) {
     console.log(error);
     return res.sendStatus(500);

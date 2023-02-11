@@ -4,11 +4,11 @@ const router = express.Router();
 const { user } = require("../models");
 
 router.get("/", async (req, res) => {
-  const _id = req.userId;
+  const userId = req.userId;
 
   let currentUser;
   try {
-    currentUser = await user.findOne({ _id: _id });
+    currentUser = await user.findOne({ _id: userId });
   } catch (error) {
     console.log(error);
     return res.sendStatus(400);
