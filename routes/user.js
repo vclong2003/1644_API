@@ -1,9 +1,10 @@
 const express = require("express");
 const router = express.Router();
 
+const jwtDecode = require("./jwtDecode");
 const { user } = require("../models");
 
-router.get("/", async (req, res) => {
+router.get("/", jwtDecode, async (req, res) => {
   const userId = req.userId;
 
   let currentUser;

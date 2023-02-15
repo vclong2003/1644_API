@@ -30,15 +30,13 @@ mongoose
 const authRoute = require("./routes/auth");
 server.use("/api/auth", authRoute);
 
-const jwtDecode = require("./routes/jwtDecode");
-
 const productRoute = require("./routes/product");
-server.use("/api/product", jwtDecode, productRoute);
+server.use("/api/product", productRoute);
 
 const cartRoute = require("./routes/cart");
-server.use("/api/cart", jwtDecode, cartRoute);
+server.use("/api/cart", cartRoute);
 
 const userRoute = require("./routes/user");
-server.use("/api/user", jwtDecode, userRoute);
+server.use("/api/user", userRoute);
 
 server.listen(process.env.SERVER_PORT);

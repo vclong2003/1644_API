@@ -1,6 +1,7 @@
 var express = require("express");
 var router = express.Router();
 
+const jwtDecode = require("./jwtDecode");
 const { product } = require("../models");
 
 /*
@@ -39,7 +40,7 @@ router.get("/", async (req, res) => {
 /*
 Get single product
 */
-router.get("/:productId", async (req, res) => {
+router.get("/:productId", jwtDecode, async (req, res) => {
   const { productId } = req.params;
   let selectedProduct;
   try {
@@ -61,7 +62,7 @@ description: String,
 price: Number,
 stock: Number,
 */
-router.post("/", async (req, res) => {
+router.post("/", jwtDecode, async (req, res) => {
   const { userRole } = req;
   if (
     !userRole ||
@@ -105,7 +106,7 @@ price: Number,
 stock: Number,
  *not all field is required
 */
-router.put("/:productId", async (req, res) => {
+router.put("/:productId", jwtDecode, async (req, res) => {
   const { userRole } = req;
   if (
     !userRole ||
@@ -141,7 +142,7 @@ router.put("/:productId", async (req, res) => {
 /*
 Delete product (allowed: 'staff', 'admin'), find product by id
 */
-router.delete("/:productId", async (req, res) => {
+router.delete("/:productId", jwtDecode, async (req, res) => {
   const { userRole } = req;
   if (
     !userRole ||
