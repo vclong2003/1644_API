@@ -15,6 +15,7 @@ router.get("/", async (req, res) => {
   }
 
   return res.status(200).json({
+    id: currentUser._id,
     email: currentUser.email,
     role: currentUser.role,
     info: currentUser.info,
