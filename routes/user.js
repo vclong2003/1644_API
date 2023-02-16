@@ -19,7 +19,6 @@ router.get("/", jwtDecode, async (req, res) => {
     id: currentUser._id,
     email: currentUser.email,
     role: currentUser.role,
-    info: currentUser.info,
   });
 });
 
