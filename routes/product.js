@@ -54,7 +54,7 @@ router.get("/:productId", jwtDecode, async (req, res) => {
 });
 
 /*
-Add products (allowed: 'staff', 'admin')
+Add products (allowed: 'staff')
 
 name: String,
 thumbnailUrl: String,
@@ -64,10 +64,7 @@ stock: Number,
 */
 router.post("/", jwtDecode, async (req, res) => {
   const { userRole } = req;
-  if (
-    !userRole ||
-    (!userRole.includes("staff") && !userRole.includes("admin"))
-  ) {
+  if (!userRole || !userRole.includes("staff")) {
     return res.sendStatus(403);
   }
 
