@@ -40,7 +40,7 @@ router.get("/", async (req, res) => {
 /*
 Get single product
 */
-router.get("/:productId", jwtDecode, async (req, res) => {
+router.get("/:productId", async (req, res) => {
   const { productId } = req.params;
   let selectedProduct;
   try {
