@@ -44,7 +44,7 @@ router.get("/:productId", async (req, res) => {
   const { productId } = req.params;
   let selectedProduct;
   try {
-    selectedProduct = await product.find({ _id: productId });
+    selectedProduct = await product.findOne({ _id: productId });
   } catch (error) {
     console.log(error);
     return res.sendStatus(400);
@@ -94,7 +94,7 @@ router.post("/", jwtDecode, async (req, res) => {
 });
 
 /*
-Update product (allowed: 'staff', 'admin'), find product by id
+Update product (allowed: 'staff'), find product by id
 
 name: String,
 thumbnailUrl: String,
@@ -105,10 +105,7 @@ stock: Number,
 */
 router.put("/:productId", jwtDecode, async (req, res) => {
   const { userRole } = req;
-  if (
-    !userRole ||
-    (!userRole.includes("staff") && !userRole.includes("admin"))
-  ) {
+  if (!userRole || !userRole.includes("staff")) {
     return res.sendStatus(403);
   }
 
