@@ -134,14 +134,11 @@ router.put("/:productId", jwtDecode, async (req, res) => {
 });
 
 /*
-Delete product (allowed: 'staff', 'admin'), find product by id
+Delete product (allowed: 'staff'), find product by id
 */
 router.delete("/:productId", jwtDecode, async (req, res) => {
   const { userRole } = req;
-  if (
-    !userRole ||
-    (!userRole.includes("staff") && !userRole.includes("admin"))
-  ) {
+  if (!userRole || !userRole.includes("staff")) {
     return res.sendStatus(403);
   }
 
