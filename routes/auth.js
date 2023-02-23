@@ -79,12 +79,7 @@ router.post("/login", async (req, res) => {
     { expiresIn: process.env.JWT_EXPIRE }
   );
 
-  return res
-    .cookie("token", token, {
-      sameSite: "none",
-      secure: true,
-    })
-    .sendStatus(200);
+  return res.cookie("token", token).sendStatus(200);
 });
 
 //Logout

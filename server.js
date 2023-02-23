@@ -11,7 +11,7 @@ server.use(logger("dev"));
 server.use(express.json());
 server.use(express.urlencoded({ extended: false }));
 server.use(cookieParser());
-server.use(cors({ origin: "http://localhost:3001", credentials: true }));
+server.use(cors({ origin: "http://127.0.0.1", credentials: true }));
 
 // Connect to MongoDB
 mongoose.set("strictQuery", true); // suppress warning
