@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const userSchema = new mongoose.Schema({
-  email: String,
+  email: { type: String, unique: true },
   password: String,
   role: [{ type: String, enum: ["customer", "staff", "admin"] }],
 });
@@ -19,11 +19,12 @@ const productSchema = new mongoose.Schema({
 const product = mongoose.model("Product", productSchema);
 
 const cartSchema = new mongoose.Schema({
-  user: { type: Schema.Types.ObjectId, ref: "User" },
+  user: { type: Schema.Types.ObjectId, ref: "User", unique: true },
   items: [
     {
-      product: { type: Schema.Types.ObjectId, ref: "Product" },
-      quantity: Number,
+      product: { type: Schema.Types.ObjectId, ref: "Product", unique: true },
+      quantity: { type: Number, default: 1 },
+      _id: false,
     },
   ],
 });

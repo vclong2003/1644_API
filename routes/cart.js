@@ -2,16 +2,20 @@ const express = require("express");
 const router = express.Router();
 
 const { cart } = require("../models");
+const jwtDecode = require("./jwtDecode");
 
 /* View cart */
-router.get("/", async (req, res) => {
+router.get("/", jwtDecode, async (req, res) => {
   const { userId } = req;
 
   let selectedCart;
   try {
-    selectedCart = await cart.findOne({ user: userId });
-    const aggregate = await cart.aggregate([{ $match: { user: userId } }, {}]);
-    console.log(aggregate);
+    selectedCart = await cart
+      .findOne({ user: userId })
+      .populate("items.product", ["_id", "name", "thumbnailUrl", "price"]);
+    if (!selectedCart) {
+      selectedCart = await cart.create({ user: userId });
+    }
   } catch (error) {
     console.log(error);
     return res.sendStatus(500);
@@ -20,20 +24,76 @@ router.get("/", async (req, res) => {
   return res.status(200).json(selectedCart);
 });
 
-/* Edit cart
-body: [{product: <productId>, quantity: <quantity>}]
+/* Add item to cart
+body: {product: <productId>}
 */
-router.post("/", async (req, res) => {
+router.post("/", jwtDecode, async (req, res) => {
   const { userId } = req;
-  const items = req.body;
+  const { product } = req.body;
 
   let selectedCart;
   try {
-    selectedCart = await cart.findOneAndUpdate(
-      { user: userId },
-      { items: items },
-      { new: true }
-    );
+    selectedCart = await cart
+      .findOneAndUpdate(
+        { user: userId },
+        {
+          $addToSet: {
+            items: { product: product },
+          },
+        },
+        { new: true }
+      )
+      .populate("items.product", ["_id", "name", "thumbnailUrl", "price"]);
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(400);
+  }
+
+  return res.status(200).json(selectedCart);
+});
+
+/* Edit cart item
+body: {product: <productId>, quantity: <quantity>}
+*/
+router.put("/", jwtDecode, async (req, res) => {
+  const { userId } = req;
+  const { product, quantity } = req.body;
+
+  let selectedCart;
+  try {
+    selectedCart = await cart
+      .findOneAndUpdate(
+        { user: userId, "items.product": product },
+        {
+          $set: { "items.$.product": product, "items.$.quantity": quantity },
+        },
+        { new: true }
+      )
+      .populate("items.product", ["_id", "name", "thumbnailUrl", "price"]);
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(400);
+  }
+
+  return res.status(200).json(selectedCart);
+});
+
+/* Delete cart item
+body: {product: <productId>}
+*/
+router.delete("/", jwtDecode, async (req, res) => {
+  const { userId } = req;
+  const { product, quantity } = req.body;
+
+  let selectedCart;
+  try {
+    selectedCart = await cart
+      .findOneAndUpdate(
+        { user: userId },
+        { $pull: { items: { product: product } } },
+        { new: true }
+      )
+      .populate("items.product", ["_id", "name", "thumbnailUrl", "price"]);
   } catch (error) {
     console.log(error);
     return res.sendStatus(400);
