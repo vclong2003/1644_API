@@ -83,7 +83,7 @@ body: {product: <productId>}
 */
 router.delete("/", jwtDecode, async (req, res) => {
   const { userId } = req;
-  const { product, quantity } = req.body;
+  const { product } = req.body;
 
   let selectedCart;
   try {
