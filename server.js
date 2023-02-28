@@ -40,5 +40,3 @@ const userRoute = require("./routes/user");
 server.use("/api/user", userRoute);
 
 server.listen(process.env.SERVER_PORT);
-
-//test
