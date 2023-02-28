@@ -11,6 +11,7 @@ server.use(logger("dev"));
 server.use(express.json());
 server.use(express.urlencoded({ extended: false }));
 server.use(cookieParser());
+server.use(cors({ origin: "https://atntoy.web.app/", credentials: true }));
 server.options(
   "*",
   cors({ origin: "https://atntoy.web.app/", credentials: true })
