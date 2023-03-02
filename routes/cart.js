@@ -65,7 +65,10 @@ router.put("/", jwtDecode, async (req, res) => {
       .findOneAndUpdate(
         { user: userId, "items.product": product },
         {
-          $set: { "items.$.product": product, "items.$.quantity": quantity },
+          $set: {
+            "items.$.product": product,
+            "items.$.quantity": quantity >= 1 ? quantity : 1,
+          },
         },
         { new: true }
       )
