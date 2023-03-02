@@ -84,16 +84,16 @@ router.put("/", jwtDecode, async (req, res) => {
 /* Delete cart item
 body: {product: <productId>}
 */
-router.delete("/", jwtDecode, async (req, res) => {
+router.delete("/:productId", jwtDecode, async (req, res) => {
   const { userId } = req;
-  const { product } = req.body;
+  const { productId } = req.params;
 
   let selectedCart;
   try {
     selectedCart = await cart
       .findOneAndUpdate(
         { user: userId },
-        { $pull: { items: { product: product } } },
+        { $pull: { items: { product: productId } } },
         { new: true }
       )
       .populate("items.product", ["_id", "name", "thumbnailUrl", "price"]);

@@ -23,7 +23,13 @@ router.use((req, res, next) => {
     next();
   } catch (error) {
     console.log(error);
-    return res.status(401).clearCookie("token").send("token expired");
+    return res
+      .status(401)
+      .clearCookie("token", {
+        sameSite: "none",
+        secure: true,
+      })
+      .send("token expired");
   }
 });
 
