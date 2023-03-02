@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema({
   shippingAddress: {
     firstName: String,
     lastName: String,
+    phone: String,
     detailedAddress: String,
     city: String,
     state: String,

@@ -80,7 +80,7 @@ router.post("/login", async (req, res) => {
   );
 
   return res
-    .cookie("token", token, { sameSite: "none", secure: true })
+    .cookie("token", token /*, { sameSite: "none", secure: true }*/)
     .sendStatus(200);
 });
 

@@ -12,15 +12,6 @@ router.get("/", jwtDecode, async (req, res) => {
 
 /* Create new order
 body: {paymentMethod: <"COD"or "Bank transfer">,
-shippingAddress: 
-    [firstName: String,
-    lastName: String,
-    detailedAddress: String,
-    city: String,
-    state: String,
-    postalCode: String,
-    country: String,]
-    }
 */
 router.post("/", jwtDecode, async (req, res) => {
   const { userId } = req;
@@ -38,7 +29,9 @@ router.post("/", jwtDecode, async (req, res) => {
     return res.sendStatus(400);
   }
 
-  if (selectedCart.items.length == 0) return res.sendStatus(400);
+  if (selectedCart.items.length == 0) {
+    return res.sendStatus(400);
+  }
 
   selectedCart.items.forEach((item) => {
     totalBill += item.product.price * item.quantity;
