@@ -5,6 +5,15 @@ const userSchema = new mongoose.Schema({
   email: { type: String, unique: true },
   password: String,
   role: [{ type: String, enum: ["customer", "staff", "admin"] }],
+  shippingAddress: {
+    firstName: String,
+    lastName: String,
+    detailedAddress: String,
+    city: String,
+    state: String,
+    postalCode: String,
+    country: String,
+  },
 });
 const user = mongoose.model("User", userSchema);
 
@@ -32,24 +41,15 @@ const cart = mongoose.model("Cart", cartSchema);
 
 const orderSchema = new mongoose.Schema({
   user: { type: Schema.Types.ObjectId, ref: "User" },
-  address: { type: Schema.Types.ObjectId, ref: "Address" },
   date: Date,
   totalBill: Number,
-  status: String,
+  paymentMethod: { type: String, enum: ["COD", "Bank transfer"] },
+  status: {
+    type: String,
+    enum: ["Pending", "In progress", "Completed", "Returned", "Canceled"],
+    default: "Pending",
+  },
 });
 const order = mongoose.model("Order", orderSchema);
 
-const addressSchema = new mongoose.Schema({
-  user: { type: Schema.Types.ObjectId, ref: "User" },
-  name: String,
-  phoneNumber: String,
-  detail: String,
-  street: String,
-  city: String,
-  state: String,
-  zipCode: String,
-  country: String,
-});
-const address = mongoose.model("Address", addressSchema);
-
-module.exports = { user, product, cart, order, address };
+module.exports = { user, product, cart, order };

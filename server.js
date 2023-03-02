@@ -40,4 +40,7 @@ server.use("/api/cart", cartRoute);
 const userRoute = require("./routes/user");
 server.use("/api/user", userRoute);
 
+const orderRoute = require("./routes/order");
+server.use("/api/order", orderRoute);
+
 server.listen(process.env.SERVER_PORT);
