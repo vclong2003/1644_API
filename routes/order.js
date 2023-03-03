@@ -2,7 +2,7 @@ var express = require("express");
 var router = express.Router();
 
 const jwtDecode = require("./jwtDecode");
-const { cart, order } = require("../models");
+const { cart, order, user } = require("../models");
 
 router.get("/", jwtDecode, async (req, res) => {
   const { userId } = req;
@@ -11,7 +11,7 @@ router.get("/", jwtDecode, async (req, res) => {
   try {
     orders = await order
       .find({ user: userId })
-      .populate("user", ["email", "shippingAddress"])
+      .populate("user", ["email"])
       .populate("items.product", ["name", "thumbnailUrl", "price"]);
   } catch (error) {
     console.log(error);
@@ -22,16 +22,27 @@ router.get("/", jwtDecode, async (req, res) => {
 });
 
 /* Create new order
-body: {paymentMethod: <"COD" or "Bank transfer">,
+body: {
+  paymentMethod: <"COD" or "Bank transfer">, 
+  shippingAddress:{
+    firstName: String,
+    lastName: String,
+    phone: String,
+    detailedAddress: String,
+    city: String,
+    state: String,
+    postalCode: String,
+    country: String,
+  }}
 */
 router.post("/", jwtDecode, async (req, res) => {
   const { userId } = req;
-  const { paymentMethod } = req.body;
+  const { paymentMethod, shippingAddress } = req.body;
   let selectedCart;
   let totalBill = 0;
   let newOrder;
 
-  if (!paymentMethod) {
+  if (!paymentMethod || !shippingAddress) {
     return res.sendStatus(400);
   }
 
@@ -67,6 +78,16 @@ router.post("/", jwtDecode, async (req, res) => {
     await selectedCart.set({ items: [] }).save();
   } catch (error) {
     console.log(error);
+    return res.sendStatus(400);
+  }
+
+  try {
+    await user.findOneAndUpdate(
+      { _id: userId },
+      { shippingAddress: { ...shippingAddress } }
+    );
+  } catch (error) {
+    console.log(err);
     return res.sendStatus(400);
   }
 

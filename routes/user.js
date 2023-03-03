@@ -56,7 +56,6 @@ router.post("/shippingAddress", jwtDecode, async (req, res) => {
     !phone ||
     !detailedAddress ||
     !city ||
-    !state ||
     !postalCode ||
     !country
   ) {
