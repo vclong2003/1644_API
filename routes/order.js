@@ -2,14 +2,17 @@ var express = require("express");
 var router = express.Router();
 
 const jwtDecode = require("./jwtDecode");
-const { cart, order, user } = require("../models");
+const { cart, order } = require("../models");
 
 router.get("/", jwtDecode, async (req, res) => {
   const { userId } = req;
   let orders;
 
   try {
-    orders = await order.find({ user: userId });
+    orders = await order
+      .find({ user: userId })
+      .populate("user", ["email", "shippingAddress"])
+      .populate("items.product", ["name", "thumbnailUrl", "price"]);
   } catch (error) {
     console.log(error);
     return res.sendStatus(400);
@@ -19,7 +22,7 @@ router.get("/", jwtDecode, async (req, res) => {
 });
 
 /* Create new order
-body: {paymentMethod: <"COD"or "Bank transfer">,
+body: {paymentMethod: <"COD" or "Bank transfer">,
 */
 router.post("/", jwtDecode, async (req, res) => {
   const { userId } = req;
@@ -27,6 +30,10 @@ router.post("/", jwtDecode, async (req, res) => {
   let selectedCart;
   let totalBill = 0;
   let newOrder;
+
+  if (!paymentMethod) {
+    return res.sendStatus(400);
+  }
 
   try {
     selectedCart = await cart
@@ -54,10 +61,10 @@ router.post("/", jwtDecode, async (req, res) => {
       items: [...selectedCart.items],
     });
 
-    newOrder
-      .populate(user, ["email", "shippingAddress"])
-      .populate("items.product", ["name", "thumbnailUrl", "price"]);
-    await selectedCart.update({ $pullAll: "items" });
+    newOrder.populate("user", ["email", "shippingAddress"]);
+    newOrder.populate("items.product", ["name", "thumbnailUrl", "price"]);
+
+    await selectedCart.set({ items: [] }).save();
   } catch (error) {
     console.log(error);
     return res.sendStatus(400);
