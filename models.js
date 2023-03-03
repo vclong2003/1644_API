@@ -43,6 +43,13 @@ const cart = mongoose.model("Cart", cartSchema);
 const orderSchema = new mongoose.Schema({
   user: { type: Schema.Types.ObjectId, ref: "User" },
   date: Date,
+  items: [
+    {
+      product: { type: Schema.Types.ObjectId, ref: "Product", unique: true },
+      quantity: { type: Number, default: 1 },
+      _id: false,
+    },
+  ],
   totalBill: Number,
   paymentMethod: { type: String, enum: ["COD", "Bank transfer"] },
   status: {

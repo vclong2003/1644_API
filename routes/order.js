@@ -6,8 +6,16 @@ const { cart, order, user } = require("../models");
 
 router.get("/", jwtDecode, async (req, res) => {
   const { userId } = req;
+  let orders;
 
-  return res.sendStatus(200);
+  try {
+    orders = await order.find({ user: userId });
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(400);
+  }
+
+  return res.status(200).json(orders);
 });
 
 /* Create new order
@@ -43,6 +51,7 @@ router.post("/", jwtDecode, async (req, res) => {
       date: new Date().toJSON(),
       totalBill: totalBill,
       paymentMethod: paymentMethod,
+      items: [...selectedCart.items],
     });
   } catch (error) {
     console.log(error);
