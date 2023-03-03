@@ -94,7 +94,7 @@ router.delete("/:productId", jwtDecode, async (req, res) => {
       .findOneAndUpdate(
         { user: userId },
         { $pull: { items: { product: productId } } },
-        { new: true }
+        { new: true } 
       )
       .populate("items.product", ["_id", "name", "thumbnailUrl", "price"]);
   } catch (error) {

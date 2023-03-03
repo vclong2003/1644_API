@@ -53,10 +53,17 @@ router.post("/", jwtDecode, async (req, res) => {
       paymentMethod: paymentMethod,
       items: [...selectedCart.items],
     });
+
+    newOrder
+      .populate(user, ["email", "shippingAddress"])
+      .populate("items.product", ["name", "thumbnailUrl", "price"]);
+    await selectedCart.update({ $pullAll: "items" });
   } catch (error) {
     console.log(error);
     return res.sendStatus(400);
   }
+
+  return res.status(200).json(newOrder);
 });
 
 module.exports = router;
