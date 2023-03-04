@@ -20,6 +20,26 @@ router.get("/", jwtDecode, async (req, res) => {
   return res.status(200).json(orders);
 });
 
+/* Get single order
+ */
+router.get("/:orderId", jwtDecode, async (req, res) => {
+  const { userId } = req;
+  const { orderId } = req.params;
+  let selectedOrder;
+
+  try {
+    selectedOrder = await order
+      .findOne({ _id: orderId, user: userId })
+      .populate("user", ["email"])
+      .populate("items.product", ["name", "thumbnailUrl", "price"]);
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(400);
+  }
+
+  return res.status(200).json(selectedOrder);
+});
+
 /* Create new order
 body: {
   paymentMethod: <"COD" or "Bank transfer">, 
