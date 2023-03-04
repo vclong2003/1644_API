@@ -46,6 +46,7 @@ router.post("/", jwtDecode, async (req, res) => {
     return res.sendStatus(400);
   }
 
+  // get current cart
   try {
     selectedCart = await cart
       .findOne({ user: userId })
@@ -55,14 +56,17 @@ router.post("/", jwtDecode, async (req, res) => {
     return res.sendStatus(400);
   }
 
+  // check if cart empty
   if (selectedCart.items.length == 0) {
     return res.sendStatus(400);
   }
 
+  // calculate the total bill
   selectedCart.items.forEach((item) => {
     totalBill += item.product.price * item.quantity;
   });
 
+  // create new order
   try {
     newOrder = await order.create({
       user: userId,
@@ -72,7 +76,7 @@ router.post("/", jwtDecode, async (req, res) => {
       items: [...selectedCart.items],
     });
 
-    newOrder.populate("user", ["email", "shippingAddress"]);
+    newOrder.populate("user", ["email"]);
     newOrder.populate("items.product", ["name", "thumbnailUrl", "price"]);
 
     await selectedCart.set({ items: [] }).save();
@@ -81,6 +85,7 @@ router.post("/", jwtDecode, async (req, res) => {
     return res.sendStatus(400);
   }
 
+  // save address for auto-filling
   try {
     await user.findOneAndUpdate(
       { _id: userId },
@@ -88,7 +93,7 @@ router.post("/", jwtDecode, async (req, res) => {
     );
   } catch (error) {
     console.log(err);
-    return res.sendStatus(400);
+    return res.sendStatus(500);
   }
 
   return res.status(200).json(newOrder);
