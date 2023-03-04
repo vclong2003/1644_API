@@ -4,15 +4,14 @@ var router = express.Router();
 const jwtDecode = require("./jwtDecode");
 const { cart, order, user } = require("../models");
 
+/* Get all personal order
+ */
 router.get("/", jwtDecode, async (req, res) => {
   const { userId } = req;
   let orders;
 
   try {
-    orders = await order
-      .find({ user: userId })
-      .populate("user", ["email"])
-      .populate("items.product", ["name", "thumbnailUrl", "price"]);
+    orders = await order.find({ user: userId }, "-items -shippingAddress");
   } catch (error) {
     console.log(error);
     return res.sendStatus(400);
@@ -74,6 +73,7 @@ router.post("/", jwtDecode, async (req, res) => {
       totalBill: totalBill,
       paymentMethod: paymentMethod,
       items: [...selectedCart.items],
+      shippingAddress: { ...shippingAddress },
     });
 
     newOrder.populate("user", ["email"]);
