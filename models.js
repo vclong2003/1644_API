@@ -34,7 +34,6 @@ const cartSchema = new mongoose.Schema({
     {
       product: { type: Schema.Types.ObjectId, ref: "Product", unique: true },
       quantity: { type: Number, default: 1 },
-      _id: false,
     },
   ],
 });
@@ -47,7 +46,6 @@ const orderSchema = new mongoose.Schema({
     {
       product: { type: Schema.Types.ObjectId, ref: "Product" },
       quantity: { type: Number, default: 1 },
-      _id: false,
     },
   ],
   totalBill: Number,
