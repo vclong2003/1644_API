@@ -13,23 +13,27 @@ router.use((req, res, next) => {
 
   let decodedToken;
   try {
+    //Verify the token
     decodedToken = jwt.verify(token, process.env.JWT_SECRET);
 
-    // For using in next middleware
+    // Add decoded information to the req so next middleware can use it
     req.userId = decodedToken.userId;
     req.userEmail = decodedToken.email;
     req.userRole = decodedToken.role;
 
+    // calling next middleware
     next();
   } catch (error) {
     console.log(error);
+
+    //token invalid or expired, perform clear token (logout)
     return res
       .status(401)
       .clearCookie("token", {
         sameSite: "none",
         secure: true,
       })
-      .send("token expired");
+      .send("token invalid");
   }
 });
 

@@ -21,7 +21,8 @@ router.post("/signup", async (req, res) => {
     return res.status(400).send("user exsited");
   }
 
-  password = bcrypt.hashSync(password, 10); // hash password
+  // hash password
+  password = bcrypt.hashSync(password, 10);
   let newUser;
   try {
     // add new user to db
@@ -30,9 +31,6 @@ router.post("/signup", async (req, res) => {
       password: password,
       role: ["customer"],
     });
-
-    //create cart for new user
-    await cart.create({ user: newUser._id });
   } catch (error) {
     console.log(error);
     return res.sendStatus(500);
@@ -45,7 +43,9 @@ router.post("/signup", async (req, res) => {
     { expiresIn: process.env.JWT_EXPIRE }
   );
 
-  return res.cookie("token", token).sendStatus(200);
+  return res
+    .cookie("token", token, { sameSite: "none", secure: true })
+    .sendStatus(200);
 });
 
 // Login
