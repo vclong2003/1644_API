@@ -34,6 +34,7 @@ const cartSchema = new mongoose.Schema({
     {
       product: { type: Schema.Types.ObjectId, ref: "Product", unique: true },
       quantity: { type: Number, default: 1 },
+      _id: false,
     },
   ],
 });
