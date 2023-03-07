@@ -32,9 +32,8 @@ const cartSchema = new mongoose.Schema({
   user: { type: Schema.Types.ObjectId, ref: "User" },
   items: [
     {
-      product: { type: Schema.Types.ObjectId, ref: "Product", unique: true },
+      product: { type: Schema.Types.ObjectId, ref: "Product" },
       quantity: { type: Number, default: 1 },
-      _id: false,
     },
   ],
 });
