@@ -7,8 +7,13 @@ const mongoose = require("mongoose");
 const server = express();
 const cors = require("cors");
 
-server.options("*", cors({ origin: process.env.ORIGIN, credentials: true }));
-server.use(cors({ origin: process.env.ORIGIN, credentials: true }));
+server.options(
+  "*",
+  cors({ origin: ["https://atn-toy.onrender.com"], credentials: true })
+);
+server.use(
+  cors({ origin: ["https://atn-toy.onrender.com"], credentials: true })
+);
 server.use(logger("dev"));
 server.use(express.json());
 server.use(express.urlencoded({ extended: false }));
