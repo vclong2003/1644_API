@@ -7,11 +7,11 @@ const mongoose = require("mongoose");
 const server = express();
 const cors = require("cors");
 
+server.options("*", cors({ origin: process.env.ORIGIN, credentials: true }));
 server.use(logger("dev"));
 server.use(express.json());
 server.use(express.urlencoded({ extended: false }));
 server.use(cookieParser());
-server.options("*", cors({ origin: process.env.ORIGIN, credentials: true }));
 server.use(cors({ origin: process.env.ORIGIN, credentials: true }));
 
 // Connect to MongoDB
@@ -27,6 +27,10 @@ mongoose
   .catch((err) => {
     console.log("Failed to connect MongoDB: " + err);
   });
+
+server.get("/", (req, res) => {
+  return res.status(200).send("OK");
+});
 
 const authRoute = require("./routes/auth");
 server.use("/api/auth", authRoute);
