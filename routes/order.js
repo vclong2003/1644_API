@@ -121,4 +121,24 @@ router.post("/", jwtDecode, async (req, res) => {
   return res.status(200).json(newOrder);
 });
 
+router.get("/all", jwtDecode, async (req, res) => {
+  const { userRole } = req;
+  let orders;
+
+  if (!userRole.includes("staff")) {
+    return res.sendStatus(403);
+  }
+
+  try {
+    orders = await order
+      .find("-items -shippingAddress -user")
+      .sort({ date: "desc" });
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+
+  return res.status(200).json(orders);
+});
+
 module.exports = router;

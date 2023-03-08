@@ -105,7 +105,7 @@ stock: Number,
 */
 router.put("/:productId", jwtDecode, async (req, res) => {
   const { userRole } = req;
-  if (!userRole || !userRole.includes("staff")) {
+  if (!userRole.includes("staff")) {
     return res.sendStatus(403);
   }
 
