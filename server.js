@@ -7,11 +7,11 @@ const mongoose = require("mongoose");
 const server = express();
 const cors = require("cors");
 
-server.options("*", { origin: process.env.ORIGIN, credentials: true });
 server.use(logger("dev"));
 server.use(express.json());
 server.use(express.urlencoded({ extended: false }));
 server.use(cookieParser());
+server.options("*", cors({ origin: process.env.ORIGIN, credentials: true }));
 server.use(cors({ origin: process.env.ORIGIN, credentials: true }));
 
 // Connect to MongoDB
