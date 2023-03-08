@@ -25,13 +25,22 @@ router.get("/", jwtDecode, async (req, res) => {
 /* Get single order
  */
 router.get("/:orderId", jwtDecode, async (req, res) => {
-  const { userId } = req;
+  const { userId, userRole } = req;
   const { orderId } = req.params;
   let selectedOrder;
 
+  const queryParam = userRole.includes("staff")
+    ? {
+        _id: orderId,
+      }
+    : {
+        _id: orderId,
+        user: userId,
+      };
+
   try {
     selectedOrder = await order
-      .findOne({ _id: orderId, user: userId })
+      .findOne(queryParam)
       .populate("user", ["email"])
       .populate("items.product", ["name", "thumbnailUrl", "price"]);
   } catch (error) {
@@ -119,26 +128,6 @@ router.post("/", jwtDecode, async (req, res) => {
   }
 
   return res.status(200).json(newOrder);
-});
-
-router.get("/all", jwtDecode, async (req, res) => {
-  const { userRole } = req;
-  let orders;
-
-  if (!userRole.includes("staff")) {
-    return res.sendStatus(403);
-  }
-
-  try {
-    orders = await order
-      .find("-items -shippingAddress -user")
-      .sort({ date: "desc" });
-  } catch (error) {
-    console.log(error);
-    return res.sendStatus(500);
-  }
-
-  return res.status(200).json(orders);
 });
 
 module.exports = router;
