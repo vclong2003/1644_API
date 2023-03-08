@@ -9,10 +9,16 @@ const cors = require("cors");
 
 server.options(
   "*",
-  cors({ origin: ["https://atn-toy.onrender.com"], credentials: true })
+  cors({
+    origin: ["https://atn-toy.onrender.com", "http://localhost:3001"],
+    credentials: true,
+  })
 );
 server.use(
-  cors({ origin: ["https://atn-toy.onrender.com"], credentials: true })
+  cors({
+    origin: ["https://atn-toy.onrender.com", "http://localhost:3001"],
+    credentials: true,
+  })
 );
 server.use(logger("dev"));
 server.use(express.json());
