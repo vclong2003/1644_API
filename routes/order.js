@@ -11,7 +11,9 @@ router.get("/", jwtDecode, async (req, res) => {
   let orders;
 
   try {
-    orders = await order.find({ user: userId }, "-items -shippingAddress");
+    orders = await order
+      .find({ user: userId }, "-items -shippingAddress -user")
+      .sort({ date: "desc" });
   } catch (error) {
     console.log(error);
     return res.sendStatus(400);

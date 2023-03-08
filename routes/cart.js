@@ -35,9 +35,9 @@ router.post("/", jwtDecode, async (req, res) => {
   try {
     selectedCart = await cart
       .findOneAndUpdate(
-        { user: userId },
+        { user: userId, "items.product": { $ne: product } },
         {
-          $addToSet: {
+          $push: {
             items: { product: product },
           },
         },
@@ -94,7 +94,7 @@ router.delete("/:productId", jwtDecode, async (req, res) => {
       .findOneAndUpdate(
         { user: userId },
         { $pull: { items: { product: productId } } },
-        { new: true } 
+        { new: true }
       )
       .populate("items.product", ["_id", "name", "thumbnailUrl", "price"]);
   } catch (error) {
