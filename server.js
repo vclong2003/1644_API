@@ -58,4 +58,7 @@ server.use("/api/user", userRoute);
 const orderRoute = require("./routes/order");
 server.use("/api/order", orderRoute);
 
+const dashboardRoute = require("./routes/dashboard");
+server.use("/api/dashboard", dashboardRoute);
+
 server.listen(process.env.SERVER_PORT);

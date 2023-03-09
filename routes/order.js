@@ -25,22 +25,16 @@ router.get("/", jwtDecode, async (req, res) => {
 /* Get single order
  */
 router.get("/:orderId", jwtDecode, async (req, res) => {
-  const { userId, userRole } = req;
+  const { userId } = req;
   const { orderId } = req.params;
   let selectedOrder;
 
-  const queryParam = userRole.includes("staff")
-    ? {
-        _id: orderId,
-      }
-    : {
-        _id: orderId,
-        user: userId,
-      };
-
   try {
     selectedOrder = await order
-      .findOne(queryParam)
+      .findOne({
+        _id: orderId,
+        user: userId,
+      })
       .populate("user", ["email"])
       .populate("items.product", ["name", "thumbnailUrl", "price"]);
   } catch (error) {
